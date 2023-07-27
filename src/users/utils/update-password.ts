@@ -1,18 +1,16 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { UpdatePasswordDto } from '../dto/update-password.dto';
 import { User } from '../interfaces/user.interface';
 
 export const updateUserPassword = (
   user: User,
-  { newPassword, oldPassword }: UpdatePasswordDto,
+  { newPassword }: UpdatePasswordDto,
 ): User => {
-  const time = new Date().getTime();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { password, updatedAt, version, ...userWithoutPassword } = user;
-  const newVersion = version + 1;
   return {
     password: newPassword,
-    updatedAt: time,
-    version: newVersion,
+    updatedAt: new Date().getTime(),
+    version: version + 1,
     ...userWithoutPassword,
   };
 };

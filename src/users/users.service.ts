@@ -24,10 +24,7 @@ export class UsersService {
     const user = this.users.find((user) => user.id === id);
 
     if (!user) {
-      throw new HttpException(
-        `User with id doesn't exist`,
-        HttpStatus.NOT_FOUND,
-      );
+      throw new HttpException(`User doesn't exist`, HttpStatus.NOT_FOUND);
     }
 
     return omitUserPassword(user);
@@ -37,10 +34,7 @@ export class UsersService {
     const index = this.users.findIndex((user) => user.id === id);
 
     if (index === -1) {
-      throw new HttpException(
-        `User with id doesn't exist`,
-        HttpStatus.NOT_FOUND,
-      );
+      throw new HttpException(`User doesn't exist`, HttpStatus.NOT_FOUND);
     }
 
     const user = this.users[index];
@@ -58,10 +52,7 @@ export class UsersService {
     const index = this.users.findIndex((user) => user.id === id);
 
     if (index === -1) {
-      throw new HttpException(
-        `User with id doesn't exist`,
-        HttpStatus.NOT_FOUND,
-      );
+      throw new HttpException(`User doesn't exist`, HttpStatus.NOT_FOUND);
     }
 
     this.users.splice(index, 1);
