@@ -44,7 +44,7 @@ export class ArtistsService {
     const index = this.artists.findIndex((artist) => artist.id === id);
 
     if (index === -1) {
-      throw new HttpException(`User doesn't exist`, HttpStatus.NOT_FOUND);
+      throw new HttpException(`Artist doesn't exist`, HttpStatus.NOT_FOUND);
     }
 
     this.artists.splice(index, 1);
