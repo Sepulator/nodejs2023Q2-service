@@ -1,14 +1,23 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { User } from './interfaces/user.interface';
 import { createUser } from './utils/create-user';
 import { omitUserPassword } from './utils/omit-password';
 import { updateUserPassword } from './utils/update-password';
+import { DataService } from 'src/data/data.service';
+import { User } from './interfaces/user.interface';
+import {
+  DataNotFoundException,
+  WrongPassowrdException,
+} from 'src/errors/errors';
 
 @Injectable()
 export class UsersService {
   private readonly users: User[] = [];
+
+  constructor(private db: DataService) {
+    this.users = db.getUsers();
+  }
 
   create(createUserDto: CreateUserDto) {
     const user = createUser(createUserDto);
@@ -24,7 +33,7 @@ export class UsersService {
     const user = this.users.find((user) => user.id === id);
 
     if (!user) {
-      throw new HttpException(`User doesn't exist`, HttpStatus.NOT_FOUND);
+      throw new DataNotFoundException('User');
     }
 
     return omitUserPassword(user);
@@ -34,13 +43,13 @@ export class UsersService {
     const index = this.users.findIndex((user) => user.id === id);
 
     if (index === -1) {
-      throw new HttpException(`User doesn't exist`, HttpStatus.NOT_FOUND);
+      throw new DataNotFoundException('User');
     }
 
     const user = this.users[index];
 
     if (updateUserDto.oldPassword !== user.password) {
-      throw new HttpException(`Wrong user password`, HttpStatus.FORBIDDEN);
+      throw new WrongPassowrdException();
     }
 
     const updatedUser = updateUserPassword(user, updateUserDto);
@@ -52,7 +61,7 @@ export class UsersService {
     const index = this.users.findIndex((user) => user.id === id);
 
     if (index === -1) {
-      throw new HttpException(`User doesn't exist`, HttpStatus.NOT_FOUND);
+      throw new DataNotFoundException('User');
     }
 
     this.users.splice(index, 1);

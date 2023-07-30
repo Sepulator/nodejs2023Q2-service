@@ -13,7 +13,7 @@ export class FavoritesService {
   }
 
   findAll() {
-    return this.db.getAllFavs();
+    return this.favs;
   }
 
   create(id: string, key: Collection) {
