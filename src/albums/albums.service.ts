@@ -52,5 +52,6 @@ export class AlbumsService {
     }
 
     this.albums.splice(index, 1);
+    this.db.removeAlbumId(id);
   }
 }

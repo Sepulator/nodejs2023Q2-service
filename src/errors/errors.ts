@@ -2,6 +2,7 @@ import {
   ForbiddenException,
   HttpStatus,
   NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 
 export class DataNotFoundException extends NotFoundException {
@@ -10,7 +11,7 @@ export class DataNotFoundException extends NotFoundException {
   }
 }
 
-export class FavsNotFoundException extends NotFoundException {
+export class FavsNotFoundException extends UnprocessableEntityException {
   constructor(name: string) {
     super(HttpStatus.UNPROCESSABLE_ENTITY, `${name} doesn't exist!`);
   }

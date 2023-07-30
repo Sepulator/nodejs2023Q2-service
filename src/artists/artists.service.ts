@@ -54,5 +54,6 @@ export class ArtistsService {
     }
 
     this.artists.splice(index, 1);
+    this.db.removeArtistId(id);
   }
 }

@@ -26,7 +26,7 @@ export class FavoritesController {
   @Delete('track/:id')
   @HttpCode(204)
   removeTrack(@Param('id', ParseUUIDPipe) id: string) {
-    return this.favoritesService.remove(id, Collection.tracks);
+    return this.favoritesService.removeTrack(id);
   }
 
   @Post('album/:id')
@@ -37,7 +37,7 @@ export class FavoritesController {
   @Delete('album/:id')
   @HttpCode(204)
   removeAlbum(@Param('id', ParseUUIDPipe) id: string) {
-    return this.favoritesService.remove(id, Collection.albums);
+    return this.favoritesService.removeAlbum(id);
   }
 
   @Post('artist/:id')
@@ -48,6 +48,6 @@ export class FavoritesController {
   @Delete('artist/:id')
   @HttpCode(204)
   removeArtist(@Param('id', ParseUUIDPipe) id: string) {
-    return this.favoritesService.remove(id, Collection.artists);
+    return this.favoritesService.removeArtist(id);
   }
 }

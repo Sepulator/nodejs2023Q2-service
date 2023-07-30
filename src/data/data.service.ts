@@ -24,21 +24,17 @@ interface DBInMemory {
 
 @Injectable()
 export class DataService {
-  private readonly db: DBInMemory = null;
-
-  constructor() {
-    this.db = {
-      users: [],
+  private readonly db: DBInMemory = {
+    users: [],
+    artists: [],
+    albums: [],
+    tracks: [],
+    favs: {
       artists: [],
       albums: [],
       tracks: [],
-      favs: {
-        artists: [],
-        albums: [],
-        tracks: [],
-      },
-    };
-  }
+    },
+  };
 
   getUsers() {
     return this.db.users;
@@ -56,20 +52,22 @@ export class DataService {
     return this.db.favs;
   }
 
-  getAllFavs() {
-    const result: FavoritesResponse = { albums: [], artists: [], tracks: [] };
-
-    this.db.favs.albums.forEach((f) =>
-      result.albums.push(this.db.albums.find((a) => a.id === f)),
+  getAllFavsResponse(): FavoritesResponse {
+    const artists = this.db.artists.filter((artist) =>
+      this.db.favs.artists.includes(artist.id),
     );
-    this.db.favs.artists.forEach((f) =>
-      result.artists.push(this.db.artists.find((a) => a.id === f)),
+    const tracks = this.db.tracks.filter((track) =>
+      this.db.favs.tracks.includes(track.id),
     );
-    this.db.favs.tracks.forEach((f) =>
-      result.tracks.push(this.db.tracks.find((a) => a.id === f)),
+    const albums = this.db.albums.filter((album) =>
+      this.db.favs.albums.includes(album.id),
     );
 
-    return result;
+    return {
+      artists: artists,
+      albums: albums,
+      tracks: tracks,
+    };
   }
 
   find(id: string, key: string) {
@@ -78,5 +76,25 @@ export class DataService {
 
   findIndex(id: string, key: string) {
     return this.db[key].findIndex((a: { id: string }) => a.id == id);
+  }
+
+  removeAlbumId(id: string) {
+    const tracks = this.db.tracks.filter((t) => t.albumId === id);
+    if (tracks) {
+      tracks.forEach((t) => (t.albumId = null));
+    }
+  }
+
+  removeArtistId(id: string) {
+    const tracks = this.db.tracks.filter((t) => t.artistId === id);
+    const albums = this.db.albums.filter((t) => t.artistId === id);
+
+    if (tracks) {
+      tracks.forEach((t) => (t.artistId = null));
+    }
+
+    if (albums) {
+      albums.forEach((a) => (a.artistId = null));
+    }
   }
 }
