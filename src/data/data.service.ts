@@ -97,4 +97,11 @@ export class DataService {
       albums.forEach((a) => (a.artistId = null));
     }
   }
+
+  removeFavsId(id: string, key: string) {
+    const index = this.db.favs[key].findIndex((a: string) => a == id);
+    if (index === -1) return;
+
+    this.db.favs[key].splice(index, 1);
+  }
 }
