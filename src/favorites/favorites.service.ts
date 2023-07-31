@@ -31,29 +31,28 @@ export class FavoritesService {
   }
 
   removeTrack(id: string) {
-    const index = this.db.findIndex(id, Collection.tracks);
+    const index = this.favs.tracks.findIndex((t) => t === id);
     if (index === -1) {
       throw new DataNotFoundException(`Track`);
     }
-    const indexTrack = this.favs.tracks.findIndex((t) => t === id);
-    this.favs.tracks.splice(indexTrack, 1);
+    this.favs.tracks.splice(index, 1);
   }
 
   removeAlbum(id: string) {
-    const index = this.db.findIndex(id, Collection.albums);
+    const index = this.favs.albums.findIndex((t) => t === id);
     if (index === -1) {
       throw new DataNotFoundException(`Album`);
     }
-    const indexTrack = this.favs.albums.findIndex((t) => t === id);
-    this.favs.albums.splice(indexTrack, 1);
+
+    this.favs.albums.splice(index, 1);
   }
 
   removeArtist(id: string) {
-    const index = this.db.findIndex(id, Collection.artists);
+    const index = this.favs.artists.findIndex((t) => t === id);
     if (index === -1) {
       throw new DataNotFoundException(`Artist`);
     }
-    const indexTrack = this.favs.artists.findIndex((t) => t === id);
-    this.favs.artists.splice(indexTrack, 1);
+
+    this.favs.artists.splice(index, 1);
   }
 }
