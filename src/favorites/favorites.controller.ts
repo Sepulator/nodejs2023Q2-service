@@ -9,6 +9,9 @@ import {
 } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
 import { Collection } from 'src/data/data.service';
+import { ApiTags } from '@nestjs/swagger';
+
+@ApiTags('Favorites')
 @Controller('favs')
 export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}
