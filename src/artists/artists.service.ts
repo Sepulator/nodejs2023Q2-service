@@ -3,7 +3,7 @@ import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './interfaces/artist.interface';
 import { v4 as uuid } from 'uuid';
-import { DataService } from 'src/data/data.service';
+import { Collection, DataService } from 'src/data/data.service';
 import { DataNotFoundException } from 'src/errors/errors';
 
 @Injectable()
@@ -55,5 +55,6 @@ export class ArtistsService {
 
     this.artists.splice(index, 1);
     this.db.removeArtistId(id);
+    this.db.removeFavsId(id, Collection.artists);
   }
 }

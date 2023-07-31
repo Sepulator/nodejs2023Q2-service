@@ -3,7 +3,7 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { Album } from './interfaces/album.interface';
 import { v4 as uuid } from 'uuid';
-import { DataService } from 'src/data/data.service';
+import { Collection, DataService } from 'src/data/data.service';
 import { DataNotFoundException } from 'src/errors/errors';
 
 @Injectable()
@@ -53,5 +53,6 @@ export class AlbumsService {
 
     this.albums.splice(index, 1);
     this.db.removeAlbumId(id);
+    this.db.removeFavsId(id, Collection.albums);
   }
 }

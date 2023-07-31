@@ -3,7 +3,7 @@ import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { Track } from './interfaces/track.interface';
 import { v4 as uuid } from 'uuid';
-import { DataService } from 'src/data/data.service';
+import { Collection, DataService } from 'src/data/data.service';
 import { DataNotFoundException } from 'src/errors/errors';
 
 @Injectable()
@@ -54,5 +54,6 @@ export class TracksService {
     }
 
     this.tracks.splice(index, 1);
+    this.db.removeFavsId(id, Collection.tracks);
   }
 }
