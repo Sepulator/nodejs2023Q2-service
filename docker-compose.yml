@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      dockerfile: Dockerfile
+      context: .
+      target: development
+    volumes:
+      - .:/usr/src/app
+    env_file:
+      - .env
+    command: npm run start:dev
+    ports:
+      - 4000:5000
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres
+    env_file:
+        - .env
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - 5432:5432
+    networks:
+      - rsschool
+    volumes:
+      - nest-postgres:/var/lib/postgresql/data
+
+networks:
+  rsschool:
+
+volumes:
+  nest-postgres:
