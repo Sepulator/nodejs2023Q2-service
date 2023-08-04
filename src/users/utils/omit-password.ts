@@ -1,8 +1,12 @@
-import { User } from '../interfaces/user.interface';
+import { User } from '@prisma/client';
 
 export const omitUserPassword = (user: User) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { password, ...userWithoutPassword } = user;
+  const { password, createdAt, updatedAt, ...userWithoutPassword } = user;
 
-  return userWithoutPassword;
+  return {
+    createdAt: createdAt.getTime(),
+    updatedAt: updatedAt.getTime(),
+    ...userWithoutPassword,
+  };
 };
