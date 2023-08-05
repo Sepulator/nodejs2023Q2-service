@@ -1,58 +1,45 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
-import { Album } from './interfaces/album.interface';
-import { v4 as uuid } from 'uuid';
-import { Collection, DataService } from 'src/data/data.service';
 import { DataNotFoundException } from 'src/errors/errors';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class AlbumsService {
-  private readonly albums: Album[] = [];
+  constructor(private prisma: PrismaService) {}
 
-  constructor(private db: DataService) {
-    this.albums = db.getAlbums();
+  async create(createAlbumDto: CreateAlbumDto) {
+    return await this.prisma.album.create({ data: createAlbumDto });
   }
 
-  create(createAlbumDto: CreateAlbumDto) {
-    const id = uuid();
-    const album: Album = { id, ...createAlbumDto };
-    this.albums.push(album);
-    return album;
+  async findAll() {
+    return await this.prisma.album.findMany();
   }
 
-  findAll() {
-    return this.albums;
-  }
-
-  findOne(id: string) {
-    const album = this.albums.find((a) => a.id === id);
+  async findOne(id: string) {
+    const album = await this.prisma.album.findUnique({ where: { id } });
     if (!album) {
       throw new DataNotFoundException('Album');
     }
     return album;
   }
 
-  update(id: string, updateAlbumDto: UpdateAlbumDto) {
-    const index = this.albums.findIndex((a) => a.id === id);
-    if (index === -1) {
+  async update(id: string, updateAlbumDto: UpdateAlbumDto) {
+    try {
+      return await this.prisma.album.update({
+        where: { id },
+        data: { ...updateAlbumDto },
+      });
+    } catch {
       throw new DataNotFoundException('Album');
     }
-
-    const newAlbum: Album = { id, ...updateAlbumDto };
-    this.albums[index] = newAlbum;
-    return newAlbum;
   }
 
-  remove(id: string) {
-    const index = this.albums.findIndex((album) => album.id === id);
-
-    if (index === -1) {
+  async remove(id: string) {
+    try {
+      return await this.prisma.album.delete({ where: { id } });
+    } catch {
       throw new DataNotFoundException('Album');
     }
-
-    this.albums.splice(index, 1);
-    this.db.removeAlbumId(id);
-    this.db.removeFavsId(id, Collection.albums);
   }
 }

@@ -1,60 +1,45 @@
 import { Injectable } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
-import { Artist } from './interfaces/artist.interface';
-import { v4 as uuid } from 'uuid';
-import { Collection, DataService } from 'src/data/data.service';
 import { DataNotFoundException } from 'src/errors/errors';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class ArtistsService {
-  private readonly artists: Artist[] = [];
+  constructor(private prisma: PrismaService) {}
 
-  constructor(private db: DataService) {
-    this.artists = db.getArtists();
+  async create(createArtistDto: CreateArtistDto) {
+    return await this.prisma.artist.create({ data: createArtistDto });
   }
 
-  create(createArtistDto: CreateArtistDto) {
-    const id = uuid();
-    const artist: Artist = { id, ...createArtistDto };
-    this.artists.push(artist);
-    return artist;
+  async findAll() {
+    return await this.prisma.artist.findMany();
   }
 
-  findAll() {
-    return this.artists;
-  }
-
-  findOne(id: string) {
-    const artist = this.artists.find((a) => a.id === id);
+  async findOne(id: string) {
+    const artist = await this.prisma.artist.findUnique({ where: { id } });
     if (!artist) {
       throw new DataNotFoundException('Artist');
     }
     return artist;
   }
 
-  update(id: string, updateArtistDto: UpdateArtistDto) {
-    const index = this.artists.findIndex((a) => a.id === id);
-
-    if (index === -1) {
+  async update(id: string, updateArtistDto: UpdateArtistDto) {
+    try {
+      return await this.prisma.artist.update({
+        where: { id },
+        data: { ...updateArtistDto },
+      });
+    } catch {
       throw new DataNotFoundException('Artist');
     }
-
-    const newArtist: Artist = { id, ...updateArtistDto };
-
-    this.artists[index] = newArtist;
-    return newArtist;
   }
 
-  remove(id: string) {
-    const index = this.artists.findIndex((artist) => artist.id === id);
-
-    if (index === -1) {
+  async remove(id: string) {
+    try {
+      return await this.prisma.artist.delete({ where: { id } });
+    } catch {
       throw new DataNotFoundException('Artist');
     }
-
-    this.artists.splice(index, 1);
-    this.db.removeArtistId(id);
-    this.db.removeFavsId(id, Collection.artists);
   }
 }

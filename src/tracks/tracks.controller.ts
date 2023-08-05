@@ -15,7 +15,7 @@ import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { ApiTags } from '@nestjs/swagger';
 
-@ApiTags('Tracks')
+@ApiTags('Track')
 @Controller('track')
 export class TracksController {
   constructor(private readonly tracksService: TracksService) {}
