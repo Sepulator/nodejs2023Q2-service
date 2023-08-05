@@ -1,58 +1,110 @@
 import { Injectable } from '@nestjs/common';
-import { Collection, DataService } from 'src/data/data.service';
-import { Favorites } from './interfaces/favorite.interface';
+import { Track } from '@prisma/client';
+
 import {
   DataNotFoundException,
   FavsNotFoundException,
 } from 'src/errors/errors';
-import { transformKey } from './utils/transform';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class FavoritesService {
-  private readonly favs: Favorites = { artists: [], albums: [], tracks: [] };
+  constructor(private prisma: PrismaService) {}
 
-  constructor(private db: DataService) {
-    this.favs = db.getFavs();
+  async findAll() {
+    const artists = await this.prisma.artistFavs
+      .findMany({
+        include: { artist: true },
+      })
+      .then((v) =>
+        v.map(({ artist }) => {
+          return { ...artist };
+        }),
+      );
+
+    const albums = await this.prisma.albumFavs
+      .findMany({
+        include: { album: true },
+      })
+      .then((v) =>
+        v.map(({ album }) => {
+          return { ...album };
+        }),
+      );
+
+    const tracks: Track[] = await this.prisma.trackFavs
+      .findMany({
+        select: { track: true },
+      })
+      .then((v) =>
+        v.map(({ track }) => {
+          return { ...track };
+        }),
+      );
+
+    return { artists, albums, tracks };
   }
 
-  findAll() {
-    return this.db.getAllFavsResponse();
-  }
+  async createTrack(id: string) {
+    try {
+      const track = await this.prisma.trackFavs.create({
+        data: { trackId: id },
+        select: { track: true },
+      });
 
-  create(id: string, key: Collection) {
-    const result = this.db.find(id, key);
-
-    if (!result) {
-      throw new FavsNotFoundException(`${transformKey(key)}`);
+      return { ...track.track };
+    } catch (error) {
+      throw new FavsNotFoundException('Track');
     }
-
-    this.favs[key].push(id);
-    return result;
   }
 
-  removeTrack(id: string) {
-    const index = this.favs.tracks.findIndex((t) => t === id);
-    if (index === -1) {
-      throw new DataNotFoundException(`Track`);
+  async createAlbum(id: string) {
+    try {
+      const album = await this.prisma.albumFavs.create({
+        data: { albumId: id },
+        select: { album: true },
+      });
+
+      return { ...album.album };
+    } catch (error) {
+      throw new FavsNotFoundException('Album');
     }
-    this.favs.tracks.splice(index, 1);
   }
 
-  removeAlbum(id: string) {
-    const index = this.favs.albums.findIndex((t) => t === id);
-    if (index === -1) {
-      throw new DataNotFoundException(`Album`);
-    }
+  async createArtist(id: string) {
+    try {
+      const artist = await this.prisma.artistFavs.create({
+        data: { artistId: id },
+        select: { artist: true },
+      });
 
-    this.favs.albums.splice(index, 1);
+      return { ...artist.artist };
+    } catch (error) {
+      throw new FavsNotFoundException('Artist');
+    }
   }
 
-  removeArtist(id: string) {
-    const index = this.favs.artists.findIndex((t) => t === id);
-    if (index === -1) {
-      throw new DataNotFoundException(`Artist`);
+  async removeTrack(id: string) {
+    try {
+      return await this.prisma.trackFavs.delete({ where: { id } });
+    } catch {
+      throw new DataNotFoundException('Track');
     }
+  }
 
-    this.favs.artists.splice(index, 1);
+  async removeAlbum(id: string) {
+    try {
+      return await this.prisma.albumFavs.delete({ where: { id } });
+    } catch {
+      throw new DataNotFoundException('Album');
+    }
+  }
+
+  async removeArtist(id: string) {
+    try {
+      return await this.prisma.artistFavs.delete({ where: { id } });
+    } catch {
+      throw new DataNotFoundException('Artist');
+    }
   }
 }

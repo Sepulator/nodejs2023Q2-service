@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { omitUserPassword } from './utils/omit-password';
+import { transformDate } from './utils/transform-date';
 import {
   DataNotFoundException,
   WrongPassowrdException,
@@ -15,12 +15,12 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     const user = await this.prisma.user.create({ data: createUserDto });
-    return omitUserPassword(user);
+    return transformDate(user);
   }
 
   async findAll() {
     const users = await this.prisma.user.findMany();
-    return users.map((user) => omitUserPassword(user));
+    return users.map((user) => transformDate(user));
   }
 
   async findOne(id: string) {
@@ -30,7 +30,7 @@ export class UsersService {
       throw new DataNotFoundException('User');
     }
 
-    return omitUserPassword(user);
+    return transformDate(user);
   }
 
   async update(id: string, updateUserDto: UpdatePasswordDto) {
@@ -52,7 +52,7 @@ export class UsersService {
       },
     });
 
-    return omitUserPassword(updatedUser);
+    return transformDate(updatedUser);
   }
 
   async remove(id: string) {

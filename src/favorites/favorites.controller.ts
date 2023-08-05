@@ -8,7 +8,6 @@ import {
   HttpCode,
 } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
-import { Collection } from 'src/data/data.service';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Favorites')
@@ -23,7 +22,7 @@ export class FavoritesController {
 
   @Post('track/:id')
   createTrack(@Param('id', ParseUUIDPipe) id: string) {
-    return this.favoritesService.create(id, Collection.tracks);
+    return this.favoritesService.createTrack(id);
   }
 
   @Delete('track/:id')
@@ -34,7 +33,7 @@ export class FavoritesController {
 
   @Post('album/:id')
   createAlbum(@Param('id', ParseUUIDPipe) id: string) {
-    return this.favoritesService.create(id, Collection.albums);
+    return this.favoritesService.createAlbum(id);
   }
 
   @Delete('album/:id')
@@ -45,7 +44,7 @@ export class FavoritesController {
 
   @Post('artist/:id')
   createArtist(@Param('id', ParseUUIDPipe) id: string) {
-    return this.favoritesService.create(id, Collection.artists);
+    return this.favoritesService.createArtist(id);
   }
 
   @Delete('artist/:id')
