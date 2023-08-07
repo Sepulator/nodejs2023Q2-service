@@ -36,35 +36,26 @@ export class ArtistsService {
   }
 
   async remove(id: string) {
-    const artistFavs = await this.prisma.artistFavs.findUnique({
-      where: { artistId: id },
-    });
+    try {
+      const artist = await this.prisma.artist.delete({ where: { id } });
 
-    if (artistFavs) {
-      await this.prisma.artistFavs.delete({ where: { artistId: id } });
-      await this.prisma.artist.delete({ where: { id } });
-    } else {
-      try {
-        const artist = await this.prisma.artist.delete({ where: { id } });
+      if (artist) {
+        await this.prisma.track.updateMany({
+          where: { artistId: id },
+          data: {
+            artistId: null,
+          },
+        });
 
-        if (artist) {
-          await this.prisma.track.updateMany({
-            where: { artistId: id },
-            data: {
-              artistId: null,
-            },
-          });
-
-          await this.prisma.album.updateMany({
-            where: { artistId: id },
-            data: {
-              artistId: null,
-            },
-          });
-        }
-      } catch {
-        throw new DataNotFoundException('Artist');
+        await this.prisma.album.updateMany({
+          where: { artistId: id },
+          data: {
+            artistId: null,
+          },
+        });
       }
+    } catch {
+      throw new DataNotFoundException('Artist');
     }
   }
 }

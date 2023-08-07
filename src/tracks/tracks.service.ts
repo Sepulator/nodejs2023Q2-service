@@ -40,7 +40,7 @@ export class TracksService {
 
     if (trackFavs) {
       await this.prisma.trackFavs.delete({ where: { trackId: id } });
-      await this.prisma.track.delete({ where: { id } });
+      return await this.prisma.track.delete({ where: { id } });
     } else {
       try {
         await this.prisma.track.delete({ where: { id } });
