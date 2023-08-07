@@ -36,10 +36,25 @@ export class AlbumsService {
   }
 
   async remove(id: string) {
-    try {
-      return await this.prisma.album.delete({ where: { id } });
-    } catch {
-      throw new DataNotFoundException('Album');
+    const albumFavs = await this.prisma.albumFavs.findUnique({
+      where: { albumId: id },
+    });
+
+    if (albumFavs) {
+      await this.prisma.albumFavs.delete({ where: { albumId: id } });
+      await this.prisma.album.delete({ where: { id } });
+    } else {
+      try {
+        const album = await this.prisma.album.delete({ where: { id } });
+        if (album) {
+          await this.prisma.track.updateMany({
+            where: { albumId: id },
+            data: { albumId: null },
+          });
+        }
+      } catch {
+        throw new DataNotFoundException('Album');
+      }
     }
   }
 }

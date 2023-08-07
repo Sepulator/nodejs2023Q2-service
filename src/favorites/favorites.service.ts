@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Track } from '@prisma/client';
 
 import {
   DataNotFoundException,
@@ -32,7 +31,7 @@ export class FavoritesService {
         }),
       );
 
-    const tracks: Track[] = await this.prisma.trackFavs
+    const tracks = await this.prisma.trackFavs
       .findMany({
         select: { track: true },
       })
@@ -84,25 +83,25 @@ export class FavoritesService {
     }
   }
 
-  async removeTrack(id: string) {
+  async removeTrack(trackId: string) {
     try {
-      return await this.prisma.trackFavs.delete({ where: { id } });
+      return await this.prisma.trackFavs.delete({ where: { trackId } });
     } catch {
       throw new DataNotFoundException('Track');
     }
   }
 
-  async removeAlbum(id: string) {
+  async removeAlbum(albumId: string) {
     try {
-      return await this.prisma.albumFavs.delete({ where: { id } });
+      return await this.prisma.albumFavs.delete({ where: { albumId } });
     } catch {
       throw new DataNotFoundException('Album');
     }
   }
 
-  async removeArtist(id: string) {
+  async removeArtist(artistId: string) {
     try {
-      return await this.prisma.artistFavs.delete({ where: { id } });
+      return await this.prisma.artistFavs.delete({ where: { artistId } });
     } catch {
       throw new DataNotFoundException('Artist');
     }

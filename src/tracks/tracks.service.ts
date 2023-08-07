@@ -36,10 +36,17 @@ export class TracksService {
   }
 
   async remove(id: string) {
-    try {
-      return await this.prisma.track.delete({ where: { id } });
-    } catch {
-      throw new DataNotFoundException('Track');
+    const trackFavs = await this.prisma.trackFavs.findUnique({ where: { id } });
+
+    if (trackFavs) {
+      await this.prisma.trackFavs.delete({ where: { trackId: id } });
+      await this.prisma.track.delete({ where: { id } });
+    } else {
+      try {
+        await this.prisma.track.delete({ where: { id } });
+      } catch {
+        throw new DataNotFoundException('Track');
+      }
     }
   }
 }
