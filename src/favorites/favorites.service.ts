@@ -45,42 +45,39 @@ export class FavoritesService {
   }
 
   async createTrack(id: string) {
-    try {
-      const track = await this.prisma.trackFavs.create({
-        data: { trackId: id },
-        select: { track: true },
-      });
+    const track = await this.prisma.track.findUnique({ where: { id } });
 
-      return { ...track.track };
-    } catch (error) {
-      throw new FavsNotFoundException('Track');
-    }
+    if (!track) throw new FavsNotFoundException('Track');
+
+    await this.prisma.trackFavs.create({
+      data: { trackId: id },
+    });
+
+    return track;
   }
 
   async createAlbum(id: string) {
-    try {
-      const album = await this.prisma.albumFavs.create({
-        data: { albumId: id },
-        select: { album: true },
-      });
+    const album = await this.prisma.album.findUnique({ where: { id } });
 
-      return { ...album.album };
-    } catch (error) {
-      throw new FavsNotFoundException('Album');
-    }
+    if (!album) throw new FavsNotFoundException('Album');
+
+    await this.prisma.albumFavs.create({
+      data: { albumId: id },
+    });
+
+    return album;
   }
 
   async createArtist(id: string) {
-    try {
-      const artist = await this.prisma.artistFavs.create({
-        data: { artistId: id },
-        select: { artist: true },
-      });
+    const artist = await this.prisma.artist.findUnique({ where: { id } });
 
-      return { ...artist.artist };
-    } catch (error) {
-      throw new FavsNotFoundException('Artist');
-    }
+    if (!artist) throw new FavsNotFoundException('Artist');
+
+    await this.prisma.artistFavs.create({
+      data: { artistId: id },
+    });
+
+    return artist;
   }
 
   async removeTrack(trackId: string) {
