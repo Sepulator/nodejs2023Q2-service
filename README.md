@@ -5,10 +5,14 @@
 - Git - [Download & Install Git](https://git-scm.com/downloads).
 - Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the `npm` package manager.
 
+## Docker images
+
+Link to docker images [docker hub](https://hub.docker.com/r/sepulator/nest-api/tags)
+
 ## Downloading
 
 ```
-git clone {repository URL}
+git clone git@github.com:Sepulator/nodejs2023Q2-service.git
 ```
 
 ## Installing NPM modules
@@ -18,16 +22,19 @@ npm install
 ```
 
 ## Running application
+Rename file `.env.example` to ` .env`
 
 ```
-npm start
+docker-compose up
 ```
 
-## Swagger documentation
+## Scan vulnerabilities
+Containers must be running 
 
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
+```
+npm run scan
+```
+
 
 ## Testing
 
@@ -66,6 +73,11 @@ npm run lint
 ```
 npm run format
 ```
+## Swagger documentation
+
+After starting the app on port (4000 as default) you can open
+in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
+For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
 ### Debugging in VSCode
 

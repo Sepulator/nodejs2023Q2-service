@@ -10,7 +10,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "scan": "docker scout cves nest-api & docker scout cves postgres",
+    "scan": "docker scout cves nest-api && docker scout cves postgres",
     "start:dev": "npx prisma migrate dev && nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "npx prisma migrate deploy && node dist/main",
