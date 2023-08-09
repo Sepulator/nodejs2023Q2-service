@@ -15,6 +15,12 @@ Link to docker images [docker hub](https://hub.docker.com/r/sepulator/nest-api/t
 git clone git@github.com:Sepulator/nodejs2023Q2-service.git
 ```
 
+## Change branch to `develop`
+
+```
+git checkout develop
+```
+
 ## Installing NPM modules
 
 ```
@@ -29,12 +35,11 @@ docker-compose up
 ```
 
 ## Scan vulnerabilities
-Containers must be running 
+Containers must be running
 
 ```
 npm run scan
 ```
-
 
 ## Testing
 
@@ -51,19 +56,6 @@ To run only one of all test suites
 ```
 npm run test -- <path to suite>
 ```
-
-To run all test with authorization
-
-```
-npm run test:auth
-```
-
-To run only specific test suite with authorization
-
-```
-npm run test:auth -- <path to suite>
-```
-
 ### Auto-fix and format
 
 ```
