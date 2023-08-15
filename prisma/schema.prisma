@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  login     String
+  password  String
+  version   Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Album {
+  id        String     @id @default(uuid())
+  name      String
+  year      Int
+  artist    Artist?    @relation(fields: [artistId], references: [id])
+  artistId  String?
+  albumFavs AlbumFavs?
+  Track     Track[]
+}
+
+model Artist {
+  id         String      @id @default(uuid())
+  name       String
+  grammy     Boolean     @default(false)
+  artistFavs ArtistFavs?
+  Track      Track[]
+  Album      Album[]
+}
+
+model Track {
+  id        String     @id @default(uuid())
+  name      String
+  artist    Artist?    @relation(fields: [artistId], references: [id])
+  artistId  String?
+  album     Album?     @relation(fields: [albumId], references: [id])
+  albumId   String?
+  duration  Int
+  trackFavs TrackFavs?
+}
+
+model ArtistFavs {
+  id       String @id @default(uuid())
+  artist   Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  artistId String @unique
+}
+
+model AlbumFavs {
+  id      String @id @default(uuid())
+  album   Album  @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  albumId String @unique
+}
+
+model TrackFavs {
+  id      String @id @default(uuid())
+  track   Track  @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  trackId String @unique
+}
