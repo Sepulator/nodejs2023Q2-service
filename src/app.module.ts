@@ -7,6 +7,7 @@ import { TracksModule } from './tracks/tracks.module';
 import { FavoritesModule } from './favorites/favorites.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
+import { LoggingService } from './loggingservice/loggingservice.service';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
     TracksModule,
     FavoritesModule,
   ],
+  providers: [LoggingService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
