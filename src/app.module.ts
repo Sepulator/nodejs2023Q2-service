@@ -8,6 +8,9 @@ import { FavoritesModule } from './favorites/favorites.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { LoggingService } from './loggingservice/loggingservice.service';
+import { LoggerModule } from './loggingservice/logger.module';
+import { AuthModule } from './auth/auth.module';
+import { IamModule } from './iam/iam.module';
 
 @Module({
   imports: [
@@ -17,6 +20,9 @@ import { LoggingService } from './loggingservice/loggingservice.service';
     AlbumsModule,
     TracksModule,
     FavoritesModule,
+    LoggerModule,
+    AuthModule,
+    IamModule,
   ],
   providers: [LoggingService],
 })
