@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
@@ -37,7 +37,7 @@ export class UsersService {
     const user = await this.prisma.user.findFirst({ where: { login } });
 
     if (!user) {
-      throw new DataNotFoundException('User');
+      throw new ForbiddenException(`No user with such login`);
     }
 
     return user;

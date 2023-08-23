@@ -10,7 +10,6 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
 import { LoggingService } from './loggingservice/loggingservice.service';
 import { LoggerModule } from './loggingservice/logger.module';
 import { AuthModule } from './auth/auth.module';
-import { IamModule } from './iam/iam.module';
 
 @Module({
   imports: [
@@ -22,7 +21,6 @@ import { IamModule } from './iam/iam.module';
     FavoritesModule,
     LoggerModule,
     AuthModule,
-    IamModule,
   ],
   providers: [LoggingService],
 })

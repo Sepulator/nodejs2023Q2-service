@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { AuthDto } from './dto/auth.dto';
-import { HashingService } from 'src/iam/hashing/hashing.service';
+import { HashingService } from 'src/auth/hashing.service';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
