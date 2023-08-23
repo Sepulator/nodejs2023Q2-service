@@ -1,4 +1,5 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 
 import { UsersModule } from './users/users.module';
 import { ArtistsModule } from './artists/artists.module';
@@ -10,9 +11,11 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
 import { LoggingService } from './loggingservice/loggingservice.service';
 import { LoggerModule } from './loggingservice/logger.module';
 import { AuthModule } from './auth/auth.module';
+import { configuration } from './config/configuration';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ load: [configuration] }),
     UsersModule,
     PrismaModule,
     ArtistsModule,
