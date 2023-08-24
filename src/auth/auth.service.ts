@@ -34,6 +34,7 @@ export class AuthService {
 
     if (!isEqual)
       throw new ForbiddenException(`Password doesn\'t match actual one`);
+
     const accessToken = await this.jwtService.signAsync(
       {
         sub: user.id,

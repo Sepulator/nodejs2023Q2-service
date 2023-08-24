@@ -6,18 +6,25 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { HashingService } from './hashing.service';
-import { UsersService } from 'src/users/users.service';
-import { PrismaModule } from 'src/prisma/prisma.module';
 import jwtConfig from 'src/config/jwt.config';
+import { UsersModule } from 'src/users/users.module';
+import { AccessTokenGuard } from './guards/access-token.guard';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthenticationGuard } from './guards/authentication.guard';
 
 @Module({
   imports: [
+    UsersModule,
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
-    PrismaModule,
     PassportModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, HashingService, UsersService],
+  providers: [
+    AccessTokenGuard,
+    AuthService,
+    HashingService,
+    { provide: APP_GUARD, useClass: AuthenticationGuard },
+  ],
 })
 export class AuthModule {}

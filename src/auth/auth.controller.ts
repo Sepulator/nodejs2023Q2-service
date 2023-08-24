@@ -3,7 +3,10 @@ import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { AuthType } from './enums/auth-type.enum';
+import { Auth } from './decorators/auth.decorator';
 
+@Auth(AuthType.None)
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {

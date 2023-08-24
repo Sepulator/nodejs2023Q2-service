@@ -18,6 +18,5 @@ async function bootstrap() {
   const port = config.get('PORT');
 
   await app.listen(port);
-  console.log(port);
 }
 bootstrap();
