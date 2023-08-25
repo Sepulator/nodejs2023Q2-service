@@ -13,18 +13,19 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('signup')
-  create(@Body() createAuthDto: AuthDto) {
-    return this.authService.signUp(createAuthDto);
+  create(@Body() authDto: AuthDto) {
+    return this.authService.signUp(authDto);
   }
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  login(@Body() createAuthDto: AuthDto) {
-    return this.authService.login(createAuthDto);
+  login(@Body() authDto: AuthDto) {
+    return this.authService.login(authDto);
   }
 
   @Post('refresh')
-  refreshToken(@Body() data: RefreshTokenDto) {
-    return data;
+  @HttpCode(HttpStatus.OK)
+  refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
+    return this.authService.refreshTokens(refreshTokenDto);
   }
 }

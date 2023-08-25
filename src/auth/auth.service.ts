@@ -1,4 +1,9 @@
-import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthDto } from './dto/auth.dto';
 import { HashingService } from 'src/auth/hashing.service';
 import { UsersService } from 'src/users/users.service';
@@ -6,6 +11,8 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigType } from '@nestjs/config';
 import jwtConfig from 'src/config/jwt.config';
 import { ActiveUserData } from './interfaces/active-user-data.interface';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -36,17 +43,55 @@ export class AuthService {
     if (!isEqual)
       throw new ForbiddenException(`Password doesn\'t match actual one`);
 
-    const accessToken = await this.jwtService.signAsync(
+    return await this.generateTokens(user);
+  }
+
+  async generateTokens(user: User) {
+    const [accessToken, refreshToken] = await Promise.all([
+      this.signToken<Partial<ActiveUserData>>(
+        user.id,
+        this.jwtConfiguration.secret,
+        this.jwtConfiguration.tokenTtl,
+        { login: user.login },
+      ),
+      this.signToken<Partial<ActiveUserData>>(
+        user.id,
+        this.jwtConfiguration.secretRefresh,
+        this.jwtConfiguration.tokenTtlRefresh,
+        { login: user.login },
+      ),
+    ]);
+
+    return { accessToken, refreshToken };
+  }
+
+  async refreshTokens(refreshTokenDto: RefreshTokenDto) {
+    try {
+      const { sub } = await this.jwtService.verifyAsync<
+        Pick<ActiveUserData, 'sub'>
+      >(refreshTokenDto.refreshToken, {
+        secret: this.jwtConfiguration.secretRefresh,
+      });
+
+      const user = await this.usersService.findOneOriginal(sub);
+      return this.generateTokens(user);
+    } catch {
+      throw new UnauthorizedException();
+    }
+  }
+
+  private async signToken<T>(
+    userId: string,
+    secret: string,
+    expiresIn: string,
+    payload: T,
+  ) {
+    return await this.jwtService.signAsync(
+      { sub: userId, ...payload },
       {
-        sub: user.id,
-        login: user.login,
-      } as ActiveUserData,
-      {
-        secret: this.jwtConfiguration.secret,
-        expiresIn: this.jwtConfiguration.tokenTtl,
+        secret,
+        expiresIn,
       },
     );
-
-    return { accessToken };
   }
 }

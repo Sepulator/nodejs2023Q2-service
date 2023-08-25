@@ -33,6 +33,16 @@ export class UsersService {
     return transformDate(user);
   }
 
+  async findOneOriginal(id: string) {
+    const user = await this.prisma.user.findUnique({ where: { id } });
+
+    if (!user) {
+      throw new DataNotFoundException('User');
+    }
+
+    return user;
+  }
+
   async findOneByLogin(login: string) {
     const user = await this.prisma.user.findFirst({ where: { login } });
 
