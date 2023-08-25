@@ -5,6 +5,7 @@ import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigType } from '@nestjs/config';
 import jwtConfig from 'src/config/jwt.config';
+import { ActiveUserData } from './interfaces/active-user-data.interface';
 
 @Injectable()
 export class AuthService {
@@ -39,7 +40,7 @@ export class AuthService {
       {
         sub: user.id,
         login: user.login,
-      },
+      } as ActiveUserData,
       {
         secret: this.jwtConfiguration.secret,
         expiresIn: this.jwtConfiguration.tokenTtl,
