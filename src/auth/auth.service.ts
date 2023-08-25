@@ -4,15 +4,16 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigType } from '@nestjs/config';
+import { User } from '@prisma/client';
+
 import { AuthDto } from './dto/auth.dto';
 import { HashingService } from 'src/auth/hashing.service';
 import { UsersService } from 'src/users/users.service';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigType } from '@nestjs/config';
 import jwtConfig from 'src/config/jwt.config';
 import { ActiveUserData } from './interfaces/active-user-data.interface';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
