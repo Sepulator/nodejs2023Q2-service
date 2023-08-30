@@ -27,6 +27,15 @@ services:
       context: .
       target: development
     image: nest-api
+    x-develop:
+      watch:
+        - action: sync
+          path: /src
+          target: /user/app/src
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: package.json
     volumes:
       - .:/usr/src/app
     env_file:
