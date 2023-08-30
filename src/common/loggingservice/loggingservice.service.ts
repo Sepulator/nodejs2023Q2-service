@@ -1,6 +1,11 @@
-import { Injectable, LogLevel, LoggerService } from '@nestjs/common';
+import {
+  ConsoleLogger,
+  Injectable,
+  LogLevel,
+  LoggerService,
+} from '@nestjs/common';
 import { join } from 'path';
-import { WriteStream, createWriteStream, writeFileSync } from 'fs';
+import { WriteStream, createWriteStream } from 'fs';
 import { EOL } from 'os';
 import { stat } from 'fs/promises';
 import dayjs from 'dayjs';
@@ -10,12 +15,13 @@ import { cwd } from 'process';
 const KiB = 1024;
 
 @Injectable()
-export class LoggingService implements LoggerService {
+export class LoggingService extends ConsoleLogger implements LoggerService {
   protected stream: WriteStream;
   protected filePath: string;
   protected logLevel: number;
 
   constructor(private readonly configService: ConfigService) {
+    super();
     this.logLevel = configService.get('logLevel');
     this.createStream();
   }
@@ -23,7 +29,6 @@ export class LoggingService implements LoggerService {
   protected createPath() {
     const date = dayjs().format('YYYY-MM-DD HH-mm-ss');
     const fileName = join(`${cwd()}`, `nest-${date}.log`);
-    writeFileSync(fileName, '');
     return fileName;
   }
 
@@ -51,7 +56,7 @@ export class LoggingService implements LoggerService {
 
   async log(message: any, ...optionalParams: any[]) {
     if (this.logLevel < 2) return;
-
+    super.log(message);
     const data = JSON.stringify({ message, optionalParams }, null, '\t');
 
     await this.write(data, 'log');
@@ -59,29 +64,29 @@ export class LoggingService implements LoggerService {
 
   async error(message: any, ...optionalParams: any[]) {
     const data = JSON.stringify({ message, optionalParams }, null, '\t');
-
+    super.error(message);
     await this.write(data, 'error');
   }
 
   async warn(message: any, ...optionalParams: any[]) {
     if (this.logLevel < 1) return;
-
+    super.warn(message);
     const data = JSON.stringify({ message, optionalParams }, null, '\t');
 
     await this.write(data, 'warn');
   }
 
-  async debug?(message: any, ...optionalParams: any[]) {
+  async debug(message: any, ...optionalParams: any[]) {
     if (this.logLevel < 3) return;
-
+    super.debug(message);
     const data = JSON.stringify({ message, optionalParams }, null, '\t');
 
     await this.write(data, 'debug');
   }
 
-  async verbose?(message: any, ...optionalParams: any[]) {
+  async verbose(message: any, ...optionalParams: any[]) {
     if (this.logLevel < 4) return;
-
+    super.verbose(message);
     const data = JSON.stringify({ message, optionalParams }, null, '\t');
 
     await this.write(data, 'verbose');
